@@ -25,7 +25,7 @@ class OrderFactory {
       ]),
       purchasedAt: faker.date.recent(),
       completedAt: faker.date.recent(),
-      cancelledAt: faker.date.recent(),
+      cancelledAt: undefined,
       notes: faker.lorem.sentence(),
       ...overrides,
     };
@@ -45,8 +45,8 @@ class OrderFactory {
    * @param {Object} overrides - Data to override defaults
    * @returns {Promise<Order>} - Created order instance
    */
-  static async create(overrides = {}) {
-    const orderData = this.generate(overrides);
+  static async create(overrides = {}, withoutTimeStamps = false) {
+    const orderData = withoutTimeStamps ? this.generateWithoutTimeStamps(overrides) : this.generate(overrides);
     return await Order.create(orderData);
   }
 

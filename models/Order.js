@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const Course = require("./Course");
 const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -53,17 +53,34 @@ const orderSchema = new mongoose.Schema({
 });
 
 // Update status timestamps
-orderSchema.pre("save", function (next) {
+orderSchema.pre("save", async function (next) {
   if (this.isModified("status")) {
-    if (this.status === "completed") {
+    if (this.status === "completed" && !this.completedAt) {
       this.completedAt = Date.now();
-    } else if (this.status === "cancelled") {
+    } else if (this.status === "cancelled" && !this.cancelledAt) {
       this.cancelledAt = Date.now();
     }
   }
-  if (this.isModified("courses")) {
-    this.totalPrice = this.courses.reduce((acc, course) => acc + course.price, 0);
-  }
+  const totalPrice = await Course.aggregate([
+    {
+      $match: {
+        _id: { $in: this.courses },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$price" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        total: 1,
+      },
+    },
+  ]);
+  this.totalPrice = totalPrice.reduce((acc, course) => acc + course.total, 0);
   next();
 });
 

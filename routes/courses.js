@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Course = require("../models/Course");
 const auth = require("../middleware/auth");
-
+const admin = require("../middleware/admin");
 // Get all courses
 router.get("/", async (req, res) => {
   try {
@@ -31,7 +31,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create course
-router.post("/", auth, async (req, res) => {
+router.post("/", auth, admin, async (req, res) => {
   try {
     const course = new Course(req.body);
 
@@ -45,7 +45,7 @@ router.post("/", auth, async (req, res) => {
 });
 
 // Update course
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", auth, admin, async (req, res) => {
   try {
     const course = await Course.findByIdAndUpdate(
       req.params.id,
@@ -66,7 +66,7 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 // Delete course
-router.delete("/:id", auth, async (req, res) => {
+router.delete("/:id", auth, admin, async (req, res) => {
   try {
     const course = await Course.findByIdAndDelete(req.params.id);
 

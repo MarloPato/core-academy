@@ -3,7 +3,7 @@ const app = require("../../server");
 const Course = require("../../models/Course");
 const UserFactory = require("../factories/userFactory");
 const CourseFactory = require("../factories/courseFactory");
-const jwt = require("jsonwebtoken");
+const { generateToken } = require("../../utils/jwt");
 
 describe("Courses Routes", () => {
   let authToken;
@@ -13,13 +13,9 @@ describe("Courses Routes", () => {
     // Create a test user and get auth token
     const user = await UserFactory.create({
       role: "admin",
-    })
+    });
 
-    authToken = jwt.sign(
-      { userId: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
+    authToken = generateToken(user._id, user.role);
 
     // Create a test course
     testCourse = await CourseFactory.create();
@@ -54,7 +50,7 @@ describe("Courses Routes", () => {
   });
 
   describe("POST /api/courses", () => {
-    it("should create a new course when authenticated", async () => {
+    it("should create a new course when authenticated and admin", async () => {
       const courseData = CourseFactory.generate();
 
       const response = await request(app)
@@ -77,10 +73,24 @@ describe("Courses Routes", () => {
 
       expect(response.status).toBe(401);
     });
+
+    it("should not create a course when not admin", async () => {
+      const teacherUser = await UserFactory.create({
+        role: "teacher",
+      });
+      authToken = generateToken(teacherUser._id, teacherUser.role);
+      const courseData = CourseFactory.generate();
+
+      const response = await request(app)
+        .post("/api/courses")
+        .set("Authorization", `Bearer ${authToken}`)
+        .send(courseData);
+      expect(response.status).toBe(403);
+    });
   });
 
   describe("PUT /api/courses/:id", () => {
-    it("should update a course when authenticated", async () => {
+    it("should update a course when authenticated and admin", async () => {
       const updateData = {
         title: "Updated Course Title",
         price: 149.99,
@@ -107,10 +117,27 @@ describe("Courses Routes", () => {
 
       expect(response.status).toBe(401);
     });
+
+    it("should not update a course when not admin", async () => {
+      const teacherUser = await UserFactory.create({
+        role: "teacher",
+      });
+      authToken = generateToken(teacherUser._id, teacherUser.role);
+      const updateData = {
+        title: "Updated Course Title",
+      };
+
+      const response = await request(app)
+        .put(`/api/courses/${testCourse._id}`)
+        .set("Authorization", `Bearer ${authToken}`)
+        .send(updateData);
+
+      expect(response.status).toBe(403);
+    });
   });
 
   describe("DELETE /api/courses/:id", () => {
-    it("should delete a course when authenticated", async () => {
+    it("should delete a course when authenticated and admin", async () => {
       const response = await request(app)
         .delete(`/api/courses/${testCourse._id}`)
         .set("Authorization", `Bearer ${authToken}`);
@@ -132,6 +159,18 @@ describe("Courses Routes", () => {
       );
 
       expect(response.status).toBe(401);
+    });
+
+    it("should not delete a course when not admin", async () => {
+      const teacherUser = await UserFactory.create({
+        role: "teacher",
+      });
+      authToken = generateToken(teacherUser._id, teacherUser.role);
+      const response = await request(app)
+        .delete(`/api/courses/${testCourse._id}`)
+        .set("Authorization", `Bearer ${authToken}`);
+
+      expect(response.status).toBe(403);
     });
   });
 });

@@ -3,7 +3,7 @@ const app = require("../../server");
 const UserFactory = require("../factories/userFactory");
 const CourseFactory = require("../factories/courseFactory");
 const OrderFactory = require("../factories/orderFactory");
-const jwt = require("jsonwebtoken");
+const { generateToken } = require("../../utils/jwt");
 
 describe("Orders Routes", () => {
   let authToken;
@@ -17,12 +17,7 @@ describe("Orders Routes", () => {
       role: "teacher",
     });
 
-    authToken = jwt.sign(
-      { userId: testUser._id, role: testUser.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-
+    authToken = generateToken(testUser._id, testUser.role);
     // Create a test course
     testCourse = await CourseFactory.create();
 
@@ -104,7 +99,7 @@ describe("Orders Routes", () => {
 
     it("should not create an order with invalid course ids", async () => {
       const orderData = {
-        courses: ["507f1f77bcf86cd799439011"], // Invalid course ID
+        courses: ["course"], // Invalid course ID
         paymentMethod: "credit_card",
       };
 

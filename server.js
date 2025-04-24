@@ -8,6 +8,7 @@ const { seedDatabase, wipeAndReseed } = require("./utils/seed");
 const authRoutes = require("./routes/auth");
 const courseRoutes = require("./routes/courses");
 const orderRoutes = require("./routes/orders");
+const analyticsRoutes = require("./routes/analytics");
 
 const app = express();
 
@@ -25,7 +26,7 @@ app.get("/api/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/orders", orderRoutes);
-
+app.use("/api/analytics", analyticsRoutes);
 // Wipe all data and reseed
 //TODO: add administator access
 app.post("/api/wipe", async (req, res) => {

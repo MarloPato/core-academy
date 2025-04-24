@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Order = require("../models/Order");
-const Course = require("../models/Course");
 const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
 // Get all orders
-router.get("/", auth, async (req, res) => {
+router.get("/", auth, admin, async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("courses", "title price");
@@ -37,19 +37,9 @@ router.post("/", auth, async (req, res) => {
   try {
     const { courses, paymentMethod } = req.body;
 
-    // Calculate total price
-    const coursePrices = await Promise.all(
-      courses.map(async (courseId) => {
-        const course = await Course.findById(courseId);
-        return course.price;
-      })
-    );
-    const totalPrice = coursePrices.reduce((sum, price) => sum + price, 0);
-
     const order = new Order({
       user: req.user.userId,
       courses,
-      totalPrice,
       status: "pending",
       paymentMethod,
       paymentStatus: "pending",
