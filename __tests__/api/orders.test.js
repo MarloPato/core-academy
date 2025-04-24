@@ -29,10 +29,14 @@ describe("Orders Routes", () => {
   });
 
   describe("GET /api/orders", () => {
-    it("should get all orders when authenticated", async () => {
+    it("should get all orders when authenticated and admin", async () => {
+      const adminUser = await UserFactory.create({
+        role: "admin",
+      });
+      const adminToken = generateToken(adminUser._id, adminUser.role);
       const response = await request(app)
         .get("/api/orders")
-        .set("Authorization", `Bearer ${authToken}`);
+        .set("Authorization", `Bearer ${adminToken}`);
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBeTruthy();
