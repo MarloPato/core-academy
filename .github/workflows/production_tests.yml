@@ -14,10 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
       - name: Install dependencies
         run: npm install
+      - Set up enviroment variables
+        run: |
+          echo "JWT_SECRET=test-secret" >> $GITHUB_ENV
       - name: Run tests
         run: npm run test
