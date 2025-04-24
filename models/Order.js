@@ -6,13 +6,18 @@ const orderSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  courses: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
-      required: true,
-    },
-  ],
+  courses: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
+    validate: [
+      (v) => v.length > 0,
+      "You must purchase at least one course",
+    ],
+  },
   status: {
     type: String,
     enum: ["pending", "completed", "cancelled"],
@@ -41,6 +46,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  totalPrice: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Update status timestamps
@@ -51,6 +60,9 @@ orderSchema.pre("save", function (next) {
     } else if (this.status === "cancelled") {
       this.cancelledAt = Date.now();
     }
+  }
+  if (this.isModified("courses")) {
+    this.totalPrice = this.courses.reduce((acc, course) => acc + course.price, 0);
   }
   next();
 });
