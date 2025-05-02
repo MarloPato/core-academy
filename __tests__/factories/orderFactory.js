@@ -40,6 +40,13 @@ class OrderFactory {
     };
   }
 
+  static generateMany(count = 2, overrides = {}, withoutTimeStamps = false) {
+    if (withoutTimeStamps) {
+      return Array.from({ length: count }, () => this.generateWithoutTimeStamps({ ...overrides}));
+    }
+    return Array.from({ length: count }, () => this.generate({ ...overrides}));
+  }
+
   /**
    * Create an order with fake data
    * @param {Object} overrides - Data to override defaults
@@ -56,10 +63,10 @@ class OrderFactory {
    * @param {Object} overrides - Base data to use for all orders
    * @returns {Promise<Array<Order>>} - Array of created orders
    */
-  static async createMany(count, overrides = {}) {
+  static async createMany(count = 2, overrides = {}, withoutTimeStamps = false) {
     const orders = [];
     for (let i = 0; i < count; i++) {
-      orders.push(await this.create(overrides));
+      orders.push(await this.create(overrides, withoutTimeStamps));
     }
     return orders;
   }

@@ -20,25 +20,6 @@ describe("User Model", () => {
     expect(user.password).not.toBe(userData.password); // Password should be hashed
   });
 
-  it("should hash password before saving", async () => {
-    const password = "password123";
-    const user = await UserFactory.create({ password });
-
-    expect(user.password).not.toBe(password);
-    expect(user.password).toMatch(/^\$2[aby]\$\d+\$/); // bcrypt hash format
-  });
-
-  it("should not hash password if not modified", async () => {
-    const user = await UserFactory.create();
-    const originalHash = user.password;
-
-    // Update a non-password field
-    user.firstName = "New Name";
-    await user.save();
-
-    expect(user.password).toBe(originalHash);
-  });
-
   it("should validate required fields", async () => {
     const invalidUser = {};
 
@@ -81,5 +62,26 @@ describe("User Model", () => {
 
     const user = await User.create(userData);
     expect(user.role).toBe("teacher");
+  });
+});
+
+describe("User Model - Save Hook", () => {
+  it("should hash password before saving", async () => {
+    const password = "password123";
+    const user = await UserFactory.create({ password });
+
+    expect(user.password).not.toBe(password);
+    expect(user.password).toMatch(/^\$2[aby]\$\d+\$/); // bcrypt hash format
+  });
+
+  it("should not hash password if not modified", async () => {
+    const user = await UserFactory.create();
+    const originalHash = user.password;
+
+    // Update a non-password field
+    user.firstName = "New Name";
+    await user.save();
+
+    expect(user.password).toBe(originalHash);
   });
 });

@@ -36,6 +36,15 @@ class UserFactory {
       ...overrides,
     };
   }
+  /**
+   * Generate multiple users
+   * @param {number} count - Number of users to generate
+   * @param {Object} overrides - Data to override defaults
+   * @returns {Array<Object>} - Array of fake user data
+   */
+  static generateMany(count = 2, overrides = {}) {
+    return Array.from({ length: count }, () => this.generate({ ...overrides}));
+  }
 
   /**
    * Create a user with fake data

@@ -27,7 +27,7 @@ router.get("/revenue-per-month", auth, admin, async (req, res) => {
 });
 
 router.get("/top-customers", auth, admin, async (req, res) => {
-    const orders = await Order.find({ status: "completed" }).populate("user");
+    const orders = await Order.find({ status: "completed" }).populate("user", "name email _id");
     const mappedOrders = orders.map((order) => {
         return {
             customer: order.user,

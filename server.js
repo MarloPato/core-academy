@@ -9,6 +9,8 @@ const authRoutes = require("./routes/auth");
 const courseRoutes = require("./routes/courses");
 const orderRoutes = require("./routes/orders");
 const analyticsRoutes = require("./routes/analytics");
+const auth = require("./middleware/auth");
+const admin = require("./middleware/admin");
 
 const app = express();
 
@@ -28,8 +30,8 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/analytics", analyticsRoutes);
 // Wipe all data and reseed
-//TODO: add administator access
-app.post("/api/wipe", async (req, res) => {
+
+app.post("/api/wipe", auth, admin, async (req, res) => {
   try {
     const result = await wipeAndReseed();
     res.json({

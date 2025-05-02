@@ -52,19 +52,18 @@ const orderSchema = new mongoose.Schema({
   },
 });
 
-// Update status timestamps
-orderSchema.pre("save", async function (next) {
-  if (this.isModified("status")) {
-    if (this.status === "completed" && !this.completedAt) {
-      this.completedAt = Date.now();
-    } else if (this.status === "cancelled" && !this.cancelledAt) {
-      this.cancelledAt = Date.now();
+async function preSaveHook(order) {
+  if (order.isModified("status")) {
+    if (order.status === "completed" && !order.completedAt) {
+      order.completedAt = Date.now();
+    } else if (order.status === "cancelled" && !order.cancelledAt) {
+      order.cancelledAt = Date.now();
     }
   }
   const totalPrice = await Course.aggregate([
     {
       $match: {
-        _id: { $in: this.courses },
+        _id: { $in: order.courses },
       },
     },
     {
@@ -80,8 +79,22 @@ orderSchema.pre("save", async function (next) {
       },
     },
   ]);
-  this.totalPrice = totalPrice.reduce((acc, course) => acc + course.total, 0);
+  order.totalPrice = totalPrice.reduce((acc, course) => acc + course.total, 0);
+}
+
+orderSchema.pre("save", async function (next) {
+  await preSaveHook(this);
   next();
+});
+
+orderSchema.post("insertMany", async function (docs) {
+  try {
+    for (const doc of docs) {
+      await doc.save();
+    }
+  } catch (error) {
+    console.warn(error);
+  }
 });
 
 const Order = mongoose.model("Order", orderSchema);

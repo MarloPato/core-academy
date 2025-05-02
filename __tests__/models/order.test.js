@@ -107,6 +107,21 @@ describe("Order Model", () => {
     const order = await Order.create(orderData);
     expect(order.paymentStatus).toBe("pending");
   });
+});
+
+describe("Order Model - Save Hook", () => {
+  it("should calculate total price correctly", async () => {
+    const user = await UserFactory.create();
+    const courses = await CourseFactory.createMany(2);
+
+    const orderData = OrderFactory.generate({
+      user: user._id,
+      courses: courses.map((course) => course._id),
+    });
+
+    const order = await Order.create(orderData);
+    expect(order.totalPrice).toBe(courses.reduce((acc, course) => acc + course.price, 0));
+  });
 
   it("should update completedAt when status changes to completed", async () => {
     const user = await UserFactory.create();
@@ -143,5 +158,21 @@ describe("Order Model", () => {
     await order.save();
 
     expect(order.cancelledAt).toBeDefined();
+  });
+});
+
+describe("Order Model - Insert Many Hook", () => {
+  it("should calculate total price correctly for multiple orders", async () => {
+    const user = await UserFactory.create();
+    const courses = await CourseFactory.createMany(2);
+    const orders = OrderFactory.generateMany(2, {
+      user: user._id,
+      courses: courses.map((course) => course._id),
+    });
+
+    await Order.insertMany(orders);
+    const _orders = await Order.find({});
+    expect(_orders.length).toBe(2);
+    expect(_orders[0].totalPrice).toBe(courses.reduce((acc, course) => acc + course.price, 0));
   });
 });

@@ -59,10 +59,4 @@ const courseSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-// Update the updatedAt timestamp before saving
-courseSchema.pre("save", function (next) {
-  this.updatedAt = Date.now();
-  next();
-});
-
 module.exports = mongoose.model("Course", courseSchema);
