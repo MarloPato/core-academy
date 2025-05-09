@@ -28,6 +28,7 @@ const courses = [
             "problem solving"
         ],
         "rating": 0,
+        "length": 3
     },
     {
         "_id": "67ed959dba3d51f9974e1cc7",
@@ -59,6 +60,7 @@ const courses = [
             "literature"
         ],
         "rating": 0,
+        "length": 3
     },
     {
         "_id": "67ed959dba3d51f9974e1cc8",
@@ -89,6 +91,7 @@ const courses = [
             "archaeology"
         ],
         "rating": 0,
+        "length": 5
     },
     {
         "_id": "67ed959dba3d51f9974e1cc9",
@@ -119,6 +122,7 @@ const courses = [
             "laboratory"
         ],
         "rating": 0,
+        "length": 8
     },
     {
         "_id": "67ed959dba3d51f9974e1cca",
@@ -149,6 +153,7 @@ const courses = [
             "communication"
         ],
         "rating": 0,
+        "length": 5
     },
     {
         "_id": "67ed959dba3d51f9974e1ccb",
@@ -179,6 +184,7 @@ const courses = [
             "STEM"
         ],
         "rating": 0,
+        "length": 9
     },
     {
         "_id": "67ed959dba3d51f9974e1ccc",
@@ -209,6 +215,7 @@ const courses = [
             "visual arts"
         ],
         "rating": 0,
+        "length": 10
     },
     {
         "_id": "67ed959dba3d51f9974e1ccd",
@@ -239,6 +246,7 @@ const courses = [
             "STEM"
         ],
         "rating": 0,
+        "length": 3
     },
     {
         "_id": "67ed959dba3d51f9974e1cce",
@@ -269,6 +277,7 @@ const courses = [
             "research"
         ],
         "rating": 0,
+        "length": 20
     },
     {
         "_id": "67ed959dba3d51f9974e1ccf",
@@ -299,6 +308,7 @@ const courses = [
             "performance"
         ],
         "rating": 0,
+        "length": 12
     },
     {
         "_id": "67ed959dba3d51f9974e1cd0",
@@ -329,6 +339,7 @@ const courses = [
             "leadership"
         ],
         "rating": 0,
+        "length": 8
     },
     {
         "_id": "67ed959dba3d51f9974e1cd1",
@@ -359,6 +370,7 @@ const courses = [
             "global studies"
         ],
         "rating": 0,
+        "length": 8
     },
     {
         "_id": "67ed959dba3d51f9974e1cd2",
@@ -389,6 +401,7 @@ const courses = [
             "human development"
         ],
         "rating": 0,
+        "length": 52
     }
 ]
 
