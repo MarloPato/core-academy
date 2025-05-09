@@ -1,5 +1,31 @@
 const users = require("./users");
 const courses = require("./courses");
+const { faker } = require("@faker-js/faker");
+
+
+const generateDates = (completed = false, cancelled = false) => {
+  const today = new Date();
+  const lastYear = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+  const purchasedAt = faker.date.between({
+    from: lastYear, 
+    to: today
+  });
+  let twoWeeksAfterPurchased = new Date(purchasedAt.getTime() + 14 * 24 * 60 * 60 * 1000);
+  if (twoWeeksAfterPurchased > today) {
+    twoWeeksAfterPurchased = today;
+  }
+  const completedAt = completed ? faker.date.between({
+    from: purchasedAt,
+    to: twoWeeksAfterPurchased
+  }) : null;
+  
+  const cancelledAt = cancelled ? faker.date.between({
+    from: purchasedAt,
+    to: twoWeeksAfterPurchased
+  }) : null;
+
+  return { purchasedAt, completedAt, cancelledAt };
+};
 
 // Generate orders with specific users and courses
 const generateOrders = () => {
@@ -11,9 +37,8 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "credit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-03-01"),
-      completedAt: new Date("2024-03-05"),
       notes: "Order #1 - 2 courses",
+      ...generateDates(true),
     },
     {
       user: users[0]._id,
@@ -21,7 +46,7 @@ const generateOrders = () => {
       status: "pending",
       paymentMethod: "paypal",
       paymentStatus: "pending",
-      purchasedAt: new Date("2024-03-15"),
+      ...generateDates(),
       notes: "Order #2 - 1 course",
     },
     {
@@ -30,8 +55,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "bank_transfer",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-02-10"),
-      completedAt: new Date("2024-02-15"),
+      ...generateDates(true),
       notes: "Order #3 - 2 courses",
     },
 
@@ -42,8 +66,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "bank_transfer",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-02-15"),
-      completedAt: new Date("2024-02-20"),
+      ...generateDates(true),
       notes: "Order #4 - 3 courses",
     },
     {
@@ -52,8 +75,7 @@ const generateOrders = () => {
       status: "cancelled",
       paymentMethod: "credit_card",
       paymentStatus: "failed",
-      purchasedAt: new Date("2024-03-10"),
-      cancelledAt: new Date("2024-03-11"),
+      ...generateDates(false, true),
       notes: "Order #5 - 1 course",
     },
     {
@@ -62,8 +84,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "debit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-01-20"),
-      completedAt: new Date("2024-01-25"),
+      ...generateDates(true),
       notes: "Order #6 - 2 courses",
     },
 
@@ -74,8 +95,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "debit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-02-20"),
-      completedAt: new Date("2024-02-25"),
+      ...generateDates(true),
       notes: "Order #7 - 2 courses",
     },
     {
@@ -84,7 +104,7 @@ const generateOrders = () => {
       status: "pending",
       paymentMethod: "paypal",
       paymentStatus: "pending",
-      purchasedAt: new Date("2024-03-18"),
+      ...generateDates(),
       notes: "Order #8 - 2 courses",
     },
     {
@@ -93,8 +113,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "credit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-01-15"),
-      completedAt: new Date("2024-01-20"),
+      ...generateDates(true),
       notes: "Order #9 - 1 course",
     },
 
@@ -105,8 +124,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "credit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-03-05"),
-      completedAt: new Date("2024-03-10"),
+      ...generateDates(true),
       notes: "Order #10 - 2 courses",
     },
     {
@@ -115,8 +133,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "bank_transfer",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-02-01"),
-      completedAt: new Date("2024-02-06"),
+      ...generateDates(true),
       notes: "Order #11 - 3 courses",
     },
     {
@@ -125,8 +142,7 @@ const generateOrders = () => {
       status: "cancelled",
       paymentMethod: "credit_card",
       paymentStatus: "failed",
-      purchasedAt: new Date("2024-03-12"),
-      cancelledAt: new Date("2024-03-13"),
+      ...generateDates(false, true),
       notes: "Order #12 - 1 course",
     },
 
@@ -137,7 +153,7 @@ const generateOrders = () => {
       status: "pending",
       paymentMethod: "paypal",
       paymentStatus: "pending",
-      purchasedAt: new Date("2024-03-20"),
+      ...generateDates(),
       notes: "Order #13 - 2 courses",
     },
     {
@@ -146,8 +162,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "debit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-02-25"),
-      completedAt: new Date("2024-03-01"),
+      ...generateDates(true),
       notes: "Order #14 - 2 courses",
     },
     {
@@ -156,8 +171,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "credit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-01-30"),
-      completedAt: new Date("2024-02-04"),
+      ...generateDates(true),
       notes: "Order #15 - 1 course",
     },
 
@@ -168,8 +182,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "bank_transfer",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-02-25"),
-      completedAt: new Date("2024-03-01"),
+      ...generateDates(true),
       notes: "Order #16 - 3 courses",
     },
     {
@@ -178,8 +191,7 @@ const generateOrders = () => {
       status: "completed",
       paymentMethod: "credit_card",
       paymentStatus: "completed",
-      purchasedAt: new Date("2024-01-10"),
-      completedAt: new Date("2024-01-15"),
+      ...generateDates(true),
       notes: "Order #17 - 2 courses",
     },
     {
@@ -188,7 +200,7 @@ const generateOrders = () => {
       status: "pending",
       paymentMethod: "paypal",
       paymentStatus: "pending",
-      purchasedAt: new Date("2024-03-22"),
+      ...generateDates(),
       notes: "Order #18 - 2 courses",
     },
   ];
