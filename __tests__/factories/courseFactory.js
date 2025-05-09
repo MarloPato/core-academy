@@ -48,6 +48,7 @@ class CourseFactory {
         count: faker.number.int({ min: 2, max: 5 }),
       }),
       rating: faker.number.float({ min: 0, max: 5, precision: 0.1 }),
+      length: faker.number.int({min: 1, max: 52}),
       ...overrides,
     };
   }
