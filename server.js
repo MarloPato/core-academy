@@ -8,6 +8,9 @@ const { seedDatabase, wipeAndReseed } = require("./utils/seed");
 const authRoutes = require("./routes/auth");
 const courseRoutes = require("./routes/courses");
 const orderRoutes = require("./routes/orders");
+const analyticsRoutes = require("./routes/analytics");
+const auth = require("./middleware/auth");
+const admin = require("./middleware/admin");
 
 const app = express();
 
@@ -15,15 +18,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGODB_URI || "mongodb://localhost:27017/core-academy")
-  .then(async () => {
-    console.log("Connected to MongoDB");
-    await seedDatabase();
-  })
-  .catch((err) => console.error("MongoDB connection error:", err));
 
 // Basic route
 app.get("/api/", (req, res) => {
@@ -34,10 +28,10 @@ app.get("/api/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/orders", orderRoutes);
-
+app.use("/api/analytics", analyticsRoutes);
 // Wipe all data and reseed
-//TODO: add administator access
-app.post("/api/wipe", async (req, res) => {
+
+app.post("/api/wipe", auth, admin, async (req, res) => {
   try {
     const result = await wipeAndReseed();
     res.json({
@@ -49,8 +43,23 @@ app.post("/api/wipe", async (req, res) => {
   }
 });
 
-// Start server
-const PORT = process.env.PORT || 8081;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Start server only if not in test mode and not being required as a module
+if (process.env.NODE_ENV !== "test" && require.main === module) {
+  const PORT = process.env.PORT || 8081;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+
+    // MongoDB Connection
+    mongoose
+      .connect(
+        process.env.MONGODB_URI || "mongodb://localhost:27017/core-academy"
+      )
+      .then(async () => {
+        console.log("Connected to MongoDB");
+        await seedDatabase();
+      })
+      .catch((err) => console.error("MongoDB connection error:", err));
+  });
+}
+
+module.exports = app;

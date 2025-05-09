@@ -27,7 +27,7 @@
     "nodemon": "^3.1.0",
     "supertest": "^7.1.0"
   },
-  "jest_unused": {
+  "jest": {
     "testEnvironment": "node",
     "setupFilesAfterEnv": [
       "./__tests__/setup.js"
