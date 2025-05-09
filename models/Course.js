@@ -57,6 +57,12 @@ const courseSchema = new mongoose.Schema({
     max: 5,
     default: 0,
   },
+  length: {
+    type: Number,
+    min: 1,
+    max: 52,
+    required: true
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Course", courseSchema);
